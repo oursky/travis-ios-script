@@ -18,8 +18,8 @@ Reusable iOS script for Travis CI with Testflight, Crittercism and HockeyApp sup
     `travis encrypt "VariableName=VariableValue" --add`
 
 ## Usage
-- Place all encrypted cert and private key in **cert" directory
-- Place all encrypted provision profile in **profile" directory
+- Place all encrypted cert and private key in **cert** directory
+- Place all encrypted provision profile in **profile** directory
 - Add encryption secret key:
     - `travis encrypt "ENCRYPTION_SECRET=<Encryption Secret Key>" --add`
 - Add protection password for private key:
