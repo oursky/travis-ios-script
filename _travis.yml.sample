@@ -1,0 +1,33 @@
+language: objective-c
+before_install:
+- export LANG=en_US.UTF-8
+- brew update
+- gem install cocoapods
+before_script:
+- ./scripts/decrypt-key.sh
+- ./scripts/add-key.sh
+script:
+- xctool -workspace $WORKSPACE_NAME.xcworkspace
+  -scheme $SCHEME_NAME -sdk $BUILD_SDK
+  ONLY_ACTIVE_ARCH=NO
+- xctool test -workspace $WORKSPACE_NAME.xcworkspace
+  -scheme $SCHEME_NAME -sdk $BUILD_SDK
+  ONLY_ACTIVE_ARCH=NO
+- xctool -workspace $WORKSPACE_NAME.xcworkspace
+  -scheme $SCHEME_NAME -sdk $RELEASE_BUILD_SDK -configuration
+  Release OBJROOT=$PWD/build SYMROOT=$PWD/build ONLY_ACTIVE_ARCH=NO
+after_success:
+- ./scripts/sign-and-upload.sh
+after_script:
+- ./scripts/remove-key.sh
+notifications:
+  slack: # slack notification key
+env:
+  global:
+  - APP_NAME=""       # app name
+  - DEVELOPER_NAME="" # developer name for signing the app
+  - PROFILE_NAME=""   # provision profile name of the release build
+  - WORKSPACE_NAME="" # workspace name
+  - SCHEME_NAME=""    # scheme name
+  - BUILD_SDK="iphonesimulator8.1"    # SDK for building and testing
+  - RELEASE_BUILD_SDK="iphoneos8.1"   # SDK for release build
