@@ -40,7 +40,7 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
     -F dsym="@$OUTPUTDIR/$APP_NAME.app.dSYM.zip" \
     -F api_token="$TESTFLIGHT_API_TOKEN" \
     -F team_token="$TESTFLIGHT_TEAM_TOKEN" \
-    -F distribution_lists='$TESTFLIGHT_DIS_LIST' \
+    -F distribution_lists="$TESTFLIGHT_DIS_LIST" \
     -F notes="$RELEASE_NOTES"
 
   if [[ $? -eq 0 ]]; then
