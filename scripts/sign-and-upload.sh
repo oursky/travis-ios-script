@@ -43,7 +43,7 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
     -F distribution_lists="$TESTFLIGHT_DIS_LIST" \
     -F notes="$RELEASE_NOTES"
 
-  if [[ $? -eq 0 ]]; then
+  if [[ $? -ne 0 ]]; then
     echo "Error: Fail uploading to TestFlight"
     exit 1
   fi
@@ -53,7 +53,7 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
     -F dsym="@$OUTPUTDIR/$APP_NAME.app.dSYM.zip" \
     -F key="$CRITTERCISM_KEY"
 
-    if [[ $? -eq 0 ]]; then
+    if [[ $? -ne 0 ]]; then
       echo "Error: Fail uploading to Crittercism"
       exit 1
     fi
@@ -80,4 +80,9 @@ if [[ "$TRAVIS_BRANCH" == "hockeyapp" ]]; then
     -F notes_type="0" \
     -F ipa="@$OUTPUTDIR/$APP_NAME.ipa" \
     -H "X-HockeyAppToken: $HOCKEY_APP_TOKEN"
+
+  if [[ $? -ne 0 ]]; then
+    echo "Error: Fail uploading to HockeyApp"
+    exit 1
+  fi
 fi
