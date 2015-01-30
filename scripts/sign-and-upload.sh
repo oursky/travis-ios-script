@@ -18,30 +18,19 @@ zip -r -9 "$OUTPUTDIR/$APP_NAME.app.dSYM.zip" "$OUTPUTDIR/$APP_NAME.app.dSYM"
 RELEASE_DATE=`date '+%Y-%m-%d %H:%M:%S'`
 RELEASE_NOTES="Build: $TRAVIS_BUILD_NUMBER\nUploaded: $RELEASE_DATE"
 
-if [[ "$TRAVIS_BRANCH" == "master" ]]; then
-  if [[ -z "$TESTFLIGHT_API_TOKEN" ]]; then
-    echo "Error: Missing TestFlight API Token."
+if [[ "$TRAVIS_BRANCH" == "testflight" ]]; then
+  if [[ -z "$DELIVER_USER" ]]; then
+    echo "Error: Missing TestFlight DELIVER_USER."
     exit 1
   fi
 
-  if [[ -z "$TESTFLIGHT_TEAM_TOKEN" ]]; then
-    echo "Error: Missing TestFlight Team Token"
+  if [[ -z "$DELIVER_PASSWORD" ]]; then
+    echo "Error: Missing TestFlight DELIVER_PASSWORD"
     exit 1
   fi
 
-  if [[ -z "$TESTFLIGHT_DIS_LIST" ]]; then
-    echo "Error: Missing TestFlight Distribution List"
-    exit 1
-  fi
-
-  echo "At master branch, upload to testflight."
-  curl http://testflightapp.com/api/builds.json \
-    -F file="@$OUTPUTDIR/$APP_NAME.ipa" \
-    -F dsym="@$OUTPUTDIR/$APP_NAME.app.dSYM.zip" \
-    -F api_token="$TESTFLIGHT_API_TOKEN" \
-    -F team_token="$TESTFLIGHT_TEAM_TOKEN" \
-    -F distribution_lists="$TESTFLIGHT_DIS_LIST" \
-    -F notes="$RELEASE_NOTES"
+  echo "At testflight branch, upload to testflight."
+  deliver testflight "$OUTPUTDIR/$APP_NAME.ipa"
 
   if [[ $? -ne 0 ]]; then
     echo "Error: Fail uploading to TestFlight"

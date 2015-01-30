@@ -27,10 +27,8 @@ Reusable iOS script for Travis CI with Testflight, Crittercism and HockeyApp sup
     - `travis encrypt "ENCRYPTION_SECRET=<Encryption Secret Key>" --add`
 - Add protection password for private key:
     - `travis encrypt "KEY_PASSWORD=<Protection Password>" --add`
-- Enable uploading **master** branch to [Testflight](https://www.testflightapp.com) by adding API token, Team token and Distribution List:
-    - `travis encrypt "TESTFLIGHT_API_TOKEN=<API Token>" --add`
-    - `travis encrypt "TESTFLIGHT_TEAM_TOKEN=<Team Token>" --add`
-    - `travis encrypt "TESTFLIGHT_DIS_LIST=<Distribution List>" --add`
+- Enable uploading **Apple testflight** branch to [iTunes Connect](https://itunesconnect.apple.com/) by iTuen Connect account:
+    - `travis encrypt "DELIVER_PASSWORD=<Password>" --add`
 - Enable uploading dSYM file on **master** branch to [Crittercism](https://www.crittercism.com) by adding App ID and API Key:
     - `travis encrypt "CRITTERCISM_APP_ID=<App ID>" --add`
     - `travis encrypt "CRITTERCISM_KEY=<API Key>" --add`
