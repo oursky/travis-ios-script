@@ -6,8 +6,8 @@ Reusable iOS script for Travis CI with Testflight, Crittercism and HockeyApp sup
 ## Setup
 1. Install travis CLI if needed: `sudo gem install travis`
 2. Install xctool if needed: `brew install xctool`
-3. Copy "_travis.yml.sample" file to ".travis"
-4. Fill in necessary info. on ".travis":
+3. Copy "_travis.yml.sample" file to ".travis.yml"
+4. Fill in necessary info. on ".travis.yml":
     - App Name
     - Developer Name
     - Provision Profile Name
@@ -19,7 +19,10 @@ Reusable iOS script for Travis CI with Testflight, Crittercism and HockeyApp sup
 
 ## Usage
 - Place all encrypted cert and private key in **cert** directory
+    - `openssl aes-256-cbc -k "<ENCRYPTION_SECRET>" -in dist.cer -out ./certs/dist.cer.enc -a`
+    - `openssl aes-256-cbc -k "<ENCRYPTION_SECRET>" -in dist.p12 -out ./certs/dist.p12.enc -a`
 - Place all encrypted provision profile in **profile** directory
+    - `openssl aes-256-cbc -k "<ENCRYPTION_SECRET>" -in <PROFILE_NAME>.mobileprovision -out ./profile/<PROFILE_NAME>.mobileprovision.enc -a`
 - Add encryption secret key:
     - `travis encrypt "ENCRYPTION_SECRET=<Encryption Secret Key>" --add`
 - Add protection password for private key:
