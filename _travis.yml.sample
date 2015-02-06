@@ -34,3 +34,5 @@ env:
   - BUILD_SDK="iphonesimulator8.1"    # SDK for building and testing
   - RELEASE_BUILD_SDK="iphoneos8.1"   # SDK for release build
   - DELIVER_USER="" # Apple Testflight user
+  - APP_EXTENSION_PROFILE_NAME="" # provision profile name for app extension, (if any)
+

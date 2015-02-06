@@ -7,11 +7,22 @@ fi
 PROVISIONING_PROFILE="$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_NAME.mobileprovision"
 OUTPUTDIR="$PWD/build/Release-iphoneos"
 
-xcrun -log -sdk iphoneos \
-PackageApplication "$OUTPUTDIR/$APP_NAME.app" \
--o "$OUTPUTDIR/$APP_NAME.ipa" \
--sign "$DEVELOPER_NAME" \
--embed "$PROVISIONING_PROFILE"
+if [[ ! -z  "$APP_EXTENSION_PROFILE_NAME" ]]; then
+  EXTENSION_PROVISIONING_PROFILE="$HOME/Library/MobileDevice/Provisioning Profiles/$APP_EXTENSION_PROFILE_NAME.mobileprovision"  
+
+  xcrun -log -sdk iphoneos \
+  PackageApplication "$OUTPUTDIR/$APP_NAME.app" \
+  -o "$OUTPUTDIR/$APP_NAME.ipa" \
+  -sign "$DEVELOPER_NAME" \
+  -embed "$PROVISIONING_PROFILE" "$APP_EXTENSION_PROFILE_NAME"
+else
+  xcrun -log -sdk iphoneos \
+  PackageApplication "$OUTPUTDIR/$APP_NAME.app" \
+  -o "$OUTPUTDIR/$APP_NAME.ipa" \
+  -sign "$DEVELOPER_NAME" \
+  -embed "$PROVISIONING_PROFILE"
+fi
+
 
 zip -r -9 "$OUTPUTDIR/$APP_NAME.app.dSYM.zip" "$OUTPUTDIR/$APP_NAME.app.dSYM"
 
