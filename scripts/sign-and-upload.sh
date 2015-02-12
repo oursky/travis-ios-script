@@ -38,6 +38,9 @@ if [[ "$TRAVIS_BRANCH" == "testflight" ]]; then
     exit 1
   fi
 
+  echo "Installing gem..."
+  gem install deliver
+
   echo "At testflight branch, upload to testflight."
   deliver testflight "$OUTPUTDIR/$APP_NAME.ipa"
 

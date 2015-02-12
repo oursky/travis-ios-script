@@ -3,8 +3,6 @@ before_install:
 - export LANG=en_US.UTF-8
 - brew update
 - gem install cocoapods
-- gem install deliver
-- brew install phantomjs
 before_script:
 - ./scripts/decrypt-key.sh
 - ./scripts/add-key.sh
