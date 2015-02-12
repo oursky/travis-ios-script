@@ -7,9 +7,7 @@ fi
 PROVISIONING_PROFILE="$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_NAME.mobileprovision"
 OUTPUTDIR="$PWD/build/Release-iphoneos"
 
-if [[ ! -z  "$APP_EXTENSION_PROFILE_NAME" ]]; then
-  EXTENSION_PROVISIONING_PROFILE="$HOME/Library/MobileDevice/Provisioning Profiles/$APP_EXTENSION_PROFILE_NAME.mobileprovision"  
-
+if [[ -n "$APP_EXTENSION_PROFILE_NAME" ]]; then
   xcrun -log -sdk iphoneos \
   PackageApplication "$OUTPUTDIR/$APP_NAME.app" \
   -o "$OUTPUTDIR/$APP_NAME.ipa" \
@@ -48,7 +46,7 @@ if [[ "$TRAVIS_BRANCH" == "testflight" ]]; then
     exit 1
   fi
 
-  if [[ ! -z "$CRITTERCISM_APP_ID" && ! -z "$CRITTERCISM_KEY" ]]; then
+  if [[ -n "$CRITTERCISM_APP_ID" && -n "$CRITTERCISM_KEY" ]]; then
     curl "https://app.crittercism.com/api_beta/dsym/$CRITTERCISM_APP_ID" \
     -F dsym="@$OUTPUTDIR/$APP_NAME.app.dSYM.zip" \
     -F key="$CRITTERCISM_KEY"
@@ -58,7 +56,6 @@ if [[ "$TRAVIS_BRANCH" == "testflight" ]]; then
       exit 1
     fi
   fi
-
 fi
 
 if [[ "$TRAVIS_BRANCH" == "hockeyapp" ]]; then
