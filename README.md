@@ -27,14 +27,14 @@ Reusable iOS script for Travis CI with Testflight, Crittercism and HockeyApp sup
     - `travis encrypt "ENCRYPTION_SECRET=<Encryption Secret Key>" --add`
 - Add protection password for private key:
     - `travis encrypt "KEY_PASSWORD=<Protection Password>" --add`
-- Enable uploading **Apple testflight** branch to [iTunes Connect](https://itunesconnect.apple.com/) by iTuen Connect account:
+- Enable uploading **testflight** branch (configured by `APPLE_TESTFLIGHT_UPLOAD_BRANCH` in `.travis.yml` file) to [iTunes Connect](https://itunesconnect.apple.com/) by iTuen Connect account:
     - `travis encrypt "DELIVER_PASSWORD=<Password>" --add`
-- Enable uploading dSYM file on **master** branch to [Crittercism](https://www.crittercism.com) by adding App ID and API Key:
-    - `travis encrypt "CRITTERCISM_APP_ID=<App ID>" --add`
-    - `travis encrypt "CRITTERCISM_KEY=<API Key>" --add`
-- Enable uploading **hockeyapp** branch to [HockeyApp](http://hockeyapp.net) by adding App ID and App Token:
+- Enable uploading **hockeyapp** branch (configured by `HOCKEYAPP_UPLOAD_BRANCH` in `.travis.yml` file) to [HockeyApp](http://hockeyapp.net) by adding App ID and App Token:
     - `travis encrypt "HOCKEY_APP_ID=<App ID>" --add`
     - `travis encrypt "HOCKEY_APP_TOKEN=<App Token>" --add`
+- Enable uploading dSYM file to [Crittercism](https://www.crittercism.com) by adding App ID and API Key:
+    - `travis encrypt "CRITTERCISM_APP_ID=<App ID>" --add`
+    - `travis encrypt "CRITTERCISM_KEY=<API Key>" --add`
 
 ## Reference
 - [Travis CI for iOS](http://www.objc.io/issue-6/travis-ci.html)
