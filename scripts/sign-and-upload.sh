@@ -38,11 +38,16 @@ if [[ "$TRAVIS_BRANCH" == "testflight" ]]; then
     exit 1
   fi
 
+  if [[ -z "$DELIVER_APP_ID" ]]; then
+    echo "Error: Missing TestFlight App ID"
+    exit 1
+  fi
+
   echo "Installing gem..."
   gem install deliver
 
   echo "At testflight branch, upload to testflight."
-  deliver testflight "$OUTPUTDIR/$APP_NAME.ipa"
+  deliver testflight "$OUTPUTDIR/$APP_NAME.ipa" -a "$DELIVER_APP_ID"
 
   if [[ $? -ne 0 ]]; then
     echo "Error: Fail uploading to TestFlight"
