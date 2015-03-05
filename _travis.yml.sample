@@ -34,4 +34,5 @@ env:
   - DELIVER_USER="" # Apple Testflight user
   - DELIVER_APP_ID="" # App ID on Apple Testflight
   - APP_EXTENSION_PROFILE_NAME="" # provision profile name for app extension, (if any)
-
+  - APPLE_TESTFLIGHT_UPLOAD_BRANCH=""  # branch name for testflight
+  - HOCKEYAPP_UPLOAD_BRANCH=""         # branch name for hockeyapp

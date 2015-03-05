@@ -21,13 +21,21 @@ else
   -embed "$PROVISIONING_PROFILE"
 fi
 
-
 zip -r -9 "$OUTPUTDIR/$APP_NAME.app.dSYM.zip" "$OUTPUTDIR/$APP_NAME.app.dSYM"
 
 RELEASE_DATE=`date '+%Y-%m-%d %H:%M:%S'`
 RELEASE_NOTES="Build: $TRAVIS_BUILD_NUMBER\nUploaded: $RELEASE_DATE"
 
-if [[ "$TRAVIS_BRANCH" == "testflight" ]]; then
+# setup default upload branch name
+if [[ -z "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
+  APPLE_TESTFLIGHT_UPLOAD_BRANCH="testflight"
+fi
+
+if [[ -z "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
+  HOCKEYAPP_UPLOAD_BRANCH="hockeyapp"
+fi
+
+if [[ "$TRAVIS_BRANCH" == "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
   if [[ -z "$DELIVER_USER" ]]; then
     echo "Error: Missing TestFlight DELIVER_USER."
     exit 1
@@ -46,7 +54,7 @@ if [[ "$TRAVIS_BRANCH" == "testflight" ]]; then
   echo "Installing gem..."
   gem install deliver
 
-  echo "At testflight branch, upload to testflight."
+  echo "At $APPLE_TESTFLIGHT_UPLOAD_BRANCH branch, upload to testflight."
   deliver testflight "$OUTPUTDIR/$APP_NAME.ipa" -a "$DELIVER_APP_ID"
 
   if [[ $? -ne 0 ]]; then
@@ -66,7 +74,7 @@ if [[ "$TRAVIS_BRANCH" == "testflight" ]]; then
   fi
 fi
 
-if [[ "$TRAVIS_BRANCH" == "hockeyapp" ]]; then
+if [[ "$TRAVIS_BRANCH" == "$HOCKEYAPP_UPLOAD_BRANCH" ]]; then
   if [[ -z "$HOCKEY_APP_ID" ]]; then
     echo "Error: Missing HockeyApp ID"
     exit 1
@@ -77,7 +85,7 @@ if [[ "$TRAVIS_BRANCH" == "hockeyapp" ]]; then
     exit 1
   fi
 
-  echo "At hockeyapp branch, upload to hockeyapp."
+  echo "At $HOCKEYAPP_UPLOAD_BRANCH branch, upload to hockeyapp."
   curl https://rink.hockeyapp.net/api/2/apps/$HOCKEY_APP_ID/app_versions \
     -F status="1" \
     -F notify="0" \
