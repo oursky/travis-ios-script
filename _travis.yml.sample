@@ -4,6 +4,7 @@ before_install:
 - brew update
 - gem install cocoapods
 before_script:
+- ./scripts/init-config.sh
 - ./scripts/decrypt-key.sh
 - ./scripts/add-key.sh
 script:

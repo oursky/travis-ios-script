@@ -32,16 +32,6 @@ zip -r -9 "$OUTPUTDIR/$APP_NAME.app.dSYM.zip" "$OUTPUTDIR/$APP_NAME.app.dSYM"
 RELEASE_DATE=`date '+%Y-%m-%d %H:%M:%S'`
 RELEASE_NOTES="Build: $TRAVIS_BUILD_NUMBER\nUploaded: $RELEASE_DATE"
 
-
-# setup default upload branch name
-if [[ -z "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
-  APPLE_TESTFLIGHT_UPLOAD_BRANCH="testflight"
-fi
-
-if [[ -z "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
-  HOCKEYAPP_UPLOAD_BRANCH="hockeyapp"
-fi
-
 ##############################
 # Upload to Apple TestFlight #
 ##############################
