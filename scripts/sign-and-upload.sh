@@ -4,6 +4,9 @@ if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
   exit 0
 fi
 
+#####################
+# Make the ipa file #
+#####################
 PROVISIONING_PROFILE="$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_NAME.mobileprovision"
 OUTPUTDIR="$PWD/build/Release-iphoneos"
 
@@ -21,10 +24,14 @@ else
   -embed "$PROVISIONING_PROFILE"
 fi
 
+#########################
+# Achieve the dSYM file #
+#########################
 zip -r -9 "$OUTPUTDIR/$APP_NAME.app.dSYM.zip" "$OUTPUTDIR/$APP_NAME.app.dSYM"
 
 RELEASE_DATE=`date '+%Y-%m-%d %H:%M:%S'`
 RELEASE_NOTES="Build: $TRAVIS_BUILD_NUMBER\nUploaded: $RELEASE_DATE"
+
 
 # setup default upload branch name
 if [[ -z "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
@@ -35,6 +42,9 @@ if [[ -z "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
   HOCKEYAPP_UPLOAD_BRANCH="hockeyapp"
 fi
 
+##############################
+# Upload to Apple TestFlight #
+##############################
 if [[ "$TRAVIS_BRANCH" == "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
   if [[ -z "$DELIVER_USER" ]]; then
     echo "Error: Missing TestFlight DELIVER_USER."
@@ -74,6 +84,9 @@ if [[ "$TRAVIS_BRANCH" == "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
   fi
 fi
 
+#######################
+# Upload to HockeyApp #
+#######################
 if [[ "$TRAVIS_BRANCH" == "$HOCKEYAPP_UPLOAD_BRANCH" ]]; then
   if [[ -z "$HOCKEY_APP_ID" ]]; then
     echo "Error: Missing HockeyApp ID"
