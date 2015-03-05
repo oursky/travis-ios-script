@@ -101,4 +101,15 @@ if [[ "$TRAVIS_BRANCH" == "$HOCKEYAPP_UPLOAD_BRANCH" ]]; then
     echo "Error: Fail uploading to HockeyApp"
     exit 1
   fi
+
+  if [[ -n "$CRITTERCISM_APP_ID" && -n "$CRITTERCISM_KEY" ]]; then
+    curl "https://app.crittercism.com/api_beta/dsym/$CRITTERCISM_APP_ID" \
+    -F dsym="@$OUTPUTDIR/$APP_NAME.app.dSYM.zip" \
+    -F key="$CRITTERCISM_KEY"
+
+    if [[ $? -ne 0 ]]; then
+      echo "Error: Fail uploading to Crittercism"
+      exit 1
+    fi
+  fi
 fi
