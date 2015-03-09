@@ -90,7 +90,7 @@ if [[ "$TRAVIS_BRANCH" == "$HOCKEYAPP_UPLOAD_BRANCH" ]]; then
 
   echo "At $HOCKEYAPP_UPLOAD_BRANCH branch, upload to hockeyapp."
   curl https://rink.hockeyapp.net/api/2/apps/$HOCKEY_APP_ID/app_versions \
-    -F status="1" \
+    -F status="2" \
     -F notify="0" \
     -F notes="$RELEASE_NOTES" \
     -F notes_type="0" \
