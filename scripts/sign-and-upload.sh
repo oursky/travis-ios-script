@@ -8,18 +8,20 @@ fi
 # Make the ipa file #
 #####################
 PROVISIONING_PROFILE="$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_NAME.mobileprovision"
-OUTPUTDIR="$PWD/build/Release-iphoneos"
+OUTPUT_DIR="$PWD/build"
+ARCHIVE_DIR="$OUTPUT_DIR/$APP_NAME.xcarchive"
+APP_FILE_PATH="$ARCHIVE_DIR/Products/Applications/$APP_NAME.app"
 
 if [[ -n "$APP_EXTENSION_PROFILE_NAME" ]]; then
   xcrun -log -sdk iphoneos \
-  PackageApplication "$OUTPUTDIR/$APP_NAME.app" \
-  -o "$OUTPUTDIR/$APP_NAME.ipa" \
+  PackageApplication "$APP_FILE_PATH" \
+  -o "$OUTPUT_DIR/$APP_NAME.ipa" \
   -sign "$DEVELOPER_NAME" \
   -embed "$PROVISIONING_PROFILE" "$APP_EXTENSION_PROFILE_NAME"
 else
   xcrun -log -sdk iphoneos \
-  PackageApplication "$OUTPUTDIR/$APP_NAME.app" \
-  -o "$OUTPUTDIR/$APP_NAME.ipa" \
+  PackageApplication "$APP_FILE_PATH" \
+  -o "$OUTPUT_DIR/$APP_NAME.ipa" \
   -sign "$DEVELOPER_NAME" \
   -embed "$PROVISIONING_PROFILE"
 fi
@@ -27,7 +29,7 @@ fi
 #########################
 # Achieve the dSYM file #
 #########################
-zip -r -9 "$OUTPUTDIR/$APP_NAME.app.dSYM.zip" "$OUTPUTDIR/$APP_NAME.app.dSYM"
+zip -r -9 "$OUTPUT_DIR/$APP_NAME.app.dSYM.zip" "$ARCHIVE_DIR/dSYMs/$APP_NAME.app.dSYM"
 
 RELEASE_DATE=`date '+%Y-%m-%d %H:%M:%S'`
 RELEASE_NOTES="Build: $TRAVIS_BUILD_NUMBER\nUploaded: $RELEASE_DATE"
@@ -55,7 +57,7 @@ if [[ "$TRAVIS_BRANCH" == "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
   gem install deliver
 
   echo "At $APPLE_TESTFLIGHT_UPLOAD_BRANCH branch, upload to testflight."
-  deliver testflight "$OUTPUTDIR/$APP_NAME.ipa" -a "$DELIVER_APP_ID"
+  deliver testflight "$OUTPUT_DIR/$APP_NAME.ipa" -a "$DELIVER_APP_ID"
 
   if [[ $? -ne 0 ]]; then
     echo "Error: Fail uploading to TestFlight"
@@ -64,7 +66,7 @@ if [[ "$TRAVIS_BRANCH" == "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
 
   if [[ -n "$CRITTERCISM_APP_ID" && -n "$CRITTERCISM_KEY" ]]; then
     curl "https://app.crittercism.com/api_beta/dsym/$CRITTERCISM_APP_ID" \
-    -F dsym="@$OUTPUTDIR/$APP_NAME.app.dSYM.zip" \
+    -F dsym="@$OUTPUT_DIR/$APP_NAME.app.dSYM.zip" \
     -F key="$CRITTERCISM_KEY"
 
     if [[ $? -ne 0 ]]; then
@@ -94,7 +96,7 @@ if [[ "$TRAVIS_BRANCH" == "$HOCKEYAPP_UPLOAD_BRANCH" ]]; then
     -F notify="0" \
     -F notes="$RELEASE_NOTES" \
     -F notes_type="0" \
-    -F ipa="@$OUTPUTDIR/$APP_NAME.ipa" \
+    -F ipa="@$OUTPUT_DIR/$APP_NAME.ipa" \
     -H "X-HockeyAppToken: $HOCKEY_APP_TOKEN"
 
   if [[ $? -ne 0 ]]; then
@@ -104,7 +106,7 @@ if [[ "$TRAVIS_BRANCH" == "$HOCKEYAPP_UPLOAD_BRANCH" ]]; then
 
   if [[ -n "$CRITTERCISM_APP_ID" && -n "$CRITTERCISM_KEY" ]]; then
     curl "https://app.crittercism.com/api_beta/dsym/$CRITTERCISM_APP_ID" \
-    -F dsym="@$OUTPUTDIR/$APP_NAME.app.dSYM.zip" \
+    -F dsym="@$OUTPUT_DIR/$APP_NAME.app.dSYM.zip" \
     -F key="$CRITTERCISM_KEY"
 
     if [[ $? -ne 0 ]]; then
