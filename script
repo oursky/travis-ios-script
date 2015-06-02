@@ -157,8 +157,7 @@ class Config:
     @property
     def key_password(self):
         if self._key_password is None:
-            self._key_password = os.path.abspath(raw_input('Enter key password: '))
-            print(self._key_password)
+            self._key_password = raw_input('Enter key password: ')
         return self._key_password 
 
 config = Config()
@@ -210,8 +209,6 @@ def encrypt_profile_and_certs():
 def generate_travis_yml():
     template = Template(filename=prepend_src_path('_travis.yml.mako'))
 
-    os.chdir(config.project_path)
-
     encrypted_encryption_secret = check_output(
             "travis encrypt 'ENCRYPTION_SECRET=%s'" % (config.encryption_secret),
             shell=True).strip("\"\n")
@@ -256,10 +253,50 @@ def generate_travis_yml():
         key_password=key_password
     ))
 
+def perform_build_test():
+    os.environ["APP_NAME"] = config.app_name
+    os.environ["DEVELOPER_NAME"] = config.developer_name
+    os.environ["PROFILE_NAME"] = config.profile_name
+    os.environ["WORKSPACE_NAME"] = config.workspace_name 
+    os.environ["SCHEME_NAME"] = config.scheme_name
+    os.environ["BUILD_SDK"] = "iphonesimulator8.1"
+    os.environ["RELEASE_BUILD_SDK"] = "iphoneos8.1"
+    os.environ["DELIVER_USER"] = config.deliver_user
+    os.environ["DELIVER_APP_ID"] = config.deliver_app_id
+    os.environ["APP_EXTENSION_PROFILE_NAME"] = config.app_extension_profile_name
+    os.environ["APPLE_TESTFLIGHT_UPLOAD_BRANCH"] = config.apple_testflight_upload_branch
+    os.environ["HOCKEYAPP_UPLOAD_BRANCH"] = config.hockeyapp_upload_branch
+    os.environ["ENCRYPTION_SECRET"] = config.encryption_secret
+    os.environ["HOCKEY_APP_ID"] = config.hockey_app_id
+    os.environ["HOCKEY_APP_TOKEN"] = config.hockey_app_token
+    os.environ["CRITTERCISM_APP_ID"] = config.crittercism_app_id
+    os.environ["CRITTERCISM_KEY"] = config.crittercism_key
+    os.environ["KEY_PASSWORD"] = config.key_password
+    os.environ["TRAVIS_PULL_REQUEST"] = "false"
+
+    call("export LANG=en_US.UTF-8", shell=True)
+    call("brew update", shell=True)
+    call("gem install --no-rdoc --no-ri cocoapods", shell=True)
+ 
+    call("./scripts/decrypt-key.sh", shell=True)
+    call("./scripts/add-key.sh", shell=True)
+
+    call("xctool -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME -sdk $BUILD_SDK ONLY_ACTIVE_ARCH=NO", shell=True)
+    call("xctool test -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME -sdk $BUILD_SDK ONLY_ACTIVE_ARCH=NO", shell=True)
+    call("xctool -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME -sdk $RELEASE_BUILD_SDK -configuration Release ONLY_ACTIVE_ARCH=NO archive -archivePath $PWD/build/$APP_NAME.xcarchive", shell=True)
+
+    call("./scripts/sign-and-upload.sh", shell=True)
+    call("./scripts/remove-key.sh", shell=True)
+
 def run():
     setup_filepath_autocomplete()
+    os.chdir(config.project_path)
+
     create_symlinks()
     encrypt_profile_and_certs()
     generate_travis_yml()
+    
+    if raw_input('Perform a build test [Y/n]? ') == "Y":
+        perform_build_test()
 
 run()
