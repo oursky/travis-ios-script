@@ -18,9 +18,11 @@ Reusable iOS script for Travis CI with Testflight, Crittercism and HockeyApp sup
 
 3. Download your app's Provisioning Profile from Apple Developer Member Center.
 
-4. Execute the script, follow the instructions
+4. Submodule this repo to your project
 
-5. Push. Sit back. Enjoy a :coffee:.
+5. Execute the script, follow the instructions
+
+6. Push. Sit back. Enjoy a :coffee:.
 
 ## Reference
 - [Travis CI for iOS](http://www.objc.io/issue-6/travis-ci.html)
