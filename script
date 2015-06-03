@@ -2,7 +2,9 @@
 
 import glob
 import os
+import ConfigParser
 from subprocess import check_output, call
+
 
 import readline
 from mako.template import Template
@@ -12,7 +14,6 @@ class Config:
         self._app_name = None
         self._developer_name = None
         self._profile_name = None
-        self._project_path = None
         self._workspace_name = None
         self._scheme_name = None
         self._deliver_user = None
@@ -30,6 +31,7 @@ class Config:
         self._mobileprovision_path = None
         self._hockey_app_token = None
         self._key_password = None
+        self._config_imported = False
 
     @property
     def app_name(self):
@@ -159,6 +161,51 @@ class Config:
         if self._key_password is None:
             self._key_password = raw_input('Enter key password: ')
         return self._key_password 
+
+    def export_config(self):
+        if self._config_imported:
+            return
+
+        f = open(prepend_src_path('travis_ios_script_config.ini'), 'w')
+        c = ConfigParser.ConfigParser()
+
+        c.add_section('General')
+        c.set('General', 'project_path', self.project_path)
+        c.set('General', 'app_name', self.app_name)
+        c.set('General', 'developer_name', self.developer_name)
+        c.set('General', 'profile_name', self.profile_name)
+        c.set('General', 'workspace_name', self.workspace_name)
+        c.set('General', 'workspace_name', self.workspace_name)
+        c.set('General', 'scheme_name', self.scheme_name)
+        c.set('General', 'app_extension_profile_name', self.app_extension_profile_name)
+
+        c.add_section('Certificates and Profile')
+        c.set('Certificates and Profile', 'encryption_secret', self.encryption_secret)
+        c.set('Certificates and Profile', 'dist_cert_path', self.dist_cert_path)
+        c.set('Certificates and Profile', 'dist_p12_path', self.dist_p12_path)
+        c.set('Certificates and Profile', 'mobileprovision_path', self.mobileprovision_path)
+        c.set('Certificates and Profile', 'key_password', self.key_password)
+
+        c.add_section('TestFlight')
+        c.set('TestFlight', 'deliver_user', self.deliver_user)
+        c.set('TestFlight', 'deliver_app_id', self.deliver_app_id)
+        c.set('TestFlight', 'apple_testflight_upload_branch', self.apple_testflight_upload_branch)
+
+        c.add_section('HockeyApp')
+        c.set('HockeyApp', 'hockey_app_id', self.hockey_app_id)
+        c.set('HockeyApp', 'hockey_app_token', self.hockey_app_token)
+        c.set('HockeyApp', 'hockeyapp_upload_branch', self.hockeyapp_upload_branch)
+
+        c.add_section('Crittercism')
+        c.set('Crittercism', 'crittercism_app_id', self.crittercism_app_id)
+        c.set('Crittercism', 'crittercism_key', self.crittercism_key)
+
+        c.write(f)
+        f.close()
+
+    def import_config(self):
+        self._config_imported = True
+        pass
 
 config = Config()
 
@@ -290,13 +337,18 @@ def perform_build_test():
 
 def run():
     setup_filepath_autocomplete()
-    os.chdir(config.project_path)
 
+    if raw_input('Import an existing config file [Y/n]? ') == "Y":
+        config.import_config()
+
+    os.chdir(config.project_path)
     create_symlinks()
     encrypt_profile_and_certs()
     generate_travis_yml()
     
     if raw_input('Perform a build test [Y/n]? ') == "Y":
         perform_build_test()
+
+    config.export_config()
 
 run()
