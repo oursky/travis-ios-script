@@ -378,10 +378,9 @@ def run():
     create_symlinks()
     encrypt_profile_and_certs()
     generate_travis_yml()
+    config.export_config()
     
     if raw_input('Perform a build test [Y/n]? ') == "Y":
         perform_build_test()
-
-    config.export_config()
 
 run()
