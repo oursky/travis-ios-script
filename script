@@ -166,7 +166,8 @@ class Config:
         if self._config_imported:
             return
 
-        f = open(prepend_src_path('travis_ios_script_config.ini'), 'w')
+        path = prepend_src_path('travis_ios_script_config.ini')
+        f = open(path, 'w')
         c = ConfigParser.ConfigParser()
 
         c.add_section('General')
@@ -174,7 +175,6 @@ class Config:
         c.set('General', 'app_name', self.app_name)
         c.set('General', 'developer_name', self.developer_name)
         c.set('General', 'profile_name', self.profile_name)
-        c.set('General', 'workspace_name', self.workspace_name)
         c.set('General', 'workspace_name', self.workspace_name)
         c.set('General', 'scheme_name', self.scheme_name)
         c.set('General', 'app_extension_profile_name', self.app_extension_profile_name)
@@ -203,14 +203,47 @@ class Config:
         c.write(f)
         f.close()
 
+        print("Config file saved at %s" % path)
+
     def import_config(self):
+        c = ConfigParser.ConfigParser()
+        path = os.path.abspath(raw_input('Enter config path: '))
+        print(path)
+        c.read(path)
+
+        self._project_path = c.get('General', 'project_path')
+        self._app_name = c.get('General', 'app_name')
+        self._developer_name = c.get('General', 'developer_name')
+        self._profile_name = c.get('General', 'profile_name')
+        self._workspace_name = c.get('General', 'workspace_name')
+        self._scheme_name = c.get('General', 'scheme_name')
+        self._app_extension_profile_name = c.get('General', 'app_extension_profile_name')
+
+
+        self._encryption_secret = c.get('Certificates and Profile', 'encryption_secret')
+        self._dist_cert_path = c.get('Certificates and Profile', 'dist_cert_path')
+        self._dist_p12_path = c.get('Certificates and Profile', 'dist_p12_path')
+        self._mobileprovision_path = c.get('Certificates and Profile', 'mobileprovision_path')
+        self._key_password = c.get('Certificates and Profile', 'key_password')
+
+        self._deliver_user = c.get('TestFlight', 'deliver_user')
+        self._deliver_app_id = c.get('TestFlight', 'deliver_app_id')
+        self._apple_testflight_upload_branch = c.get('TestFlight', 'apple_testflight_upload_branch')
+
+        self._hockey_app_id = c.get('HockeyApp', 'hockey_app_id')
+        self._hockey_app_token = c.get('HockeyApp', 'hockey_app_token')
+        self._hockeyapp_upload_branch = c.get('HockeyApp', 'hockeyapp_upload_branch')
+
+        self._crittercism_app_id = c.get('Crittercism', 'crittercism_app_id')
+        self._crittercism_key = c.get('Crittercism', 'crittercism_key')
+
         self._config_imported = True
-        pass
 
 config = Config()
 
+src_path = os.path.dirname(os.path.realpath(__file__))
+
 def prepend_src_path(filename):
-    src_path = os.path.dirname(os.path.realpath(__file__))
     return os.path.join(src_path, filename)
 
 def setup_filepath_autocomplete():
