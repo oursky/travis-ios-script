@@ -1,4 +1,5 @@
 language: objective-c
+cache: cocoapods
 before_install:
 - export LANG=en_US.UTF-8
 - brew update
