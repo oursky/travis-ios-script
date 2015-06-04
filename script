@@ -1,0 +1,392 @@
+#! /usr/bin/env python
+
+import glob
+import os
+import ConfigParser
+from subprocess import check_output, call
+
+
+import readline
+from mako.template import Template
+
+class Config:
+    def __init__(self):
+        self._app_name = None
+        self._developer_name = None
+        self._profile_name = None
+        self._workspace_name = None
+        self._scheme_name = None
+        self._deliver_user = None
+        self._deliver_app_id = None
+        self._app_extension_profile_name = None
+        self._apple_testflight_upload_branch = None
+        self._hockeyapp_upload_branch = None
+        self._project_path = None
+        self._encryption_secret = None
+        self._hockey_app_id = None
+        self._crittercism_app_id = None
+        self._crittercism_key = None
+        self._dist_cert_path = None
+        self._dist_p12_path = None
+        self._mobileprovision_path = None
+        self._hockey_app_token = None
+        self._key_password = None
+        self._config_imported = False
+
+    @property
+    def app_name(self):
+        if self._app_name is None:
+            self._app_name = raw_input('Enter app name: ')
+        return self._app_name
+
+    @property
+    def developer_name(self):
+        if self._developer_name is None:
+            self._developer_name = raw_input(
+                    'Enter developer name for signing the app: ')
+        return self._developer_name
+
+    @property
+    def profile_name(self):
+        if self._profile_name is None:
+            self._profile_name = raw_input(
+                    'Enter provision profile name of the release build: ')
+        return self._profile_name
+
+    @property
+    def workspace_name(self):
+        if self._workspace_name is None:
+            self._workspace_name = raw_input('Enter workspace name: ')
+        return self._workspace_name
+
+    @property
+    def scheme_name(self):
+        if self._scheme_name is None:
+            self._scheme_name = raw_input('Enter scheme name: ')
+        return self._scheme_name
+
+    @property
+    def deliver_user(self):
+        if self._deliver_user is None:
+            self._deliver_user = raw_input('Enter Apple Testflight user: ')
+        return self._deliver_user
+
+    @property
+    def deliver_app_id(self):
+        if self._deliver_app_id is None:
+            self._deliver_app_id = raw_input(
+                    'Enter App ID on Apple Testflight: ')
+        return self._deliver_app_id
+    
+    @property
+    def app_extension_profile_name(self):
+        if self._app_extension_profile_name is None:
+            self._app_extension_profile_name = raw_input(
+                    'Enter provision profile name for app extension, (if any) ')
+        return self._app_extension_profile_name
+
+    @property
+    def apple_testflight_upload_branch(self):
+        if self._apple_testflight_upload_branch is None:
+            self._apple_testflight_upload_branch = raw_input('Enter branch name for testflight: ')
+        return self._apple_testflight_upload_branch
+
+    @property
+    def hockeyapp_upload_branch(self):
+        if self._hockeyapp_upload_branch is None:
+            self._hockeyapp_upload_branch = raw_input('Enter branch name for hockeyapp: ')
+        return self._hockeyapp_upload_branch 
+
+    @property
+    def project_path(self):
+        if self._project_path is None:
+            self._project_path = os.path.abspath(raw_input('Enter the project path: '))
+            print(self._project_path)
+        return self._project_path 
+
+    @property
+    def encryption_secret(self):
+        if self._encryption_secret is None:
+            self._encryption_secret = raw_input('Enter encryption secret: ')
+        return self._encryption_secret 
+
+    @property
+    def hockey_app_id(self):
+        if self._hockey_app_id is None:
+            self._hockey_app_id = raw_input('Enter hockey app id: ')
+        return self._hockey_app_id 
+
+    @property
+    def hockey_app_token(self):
+        if self._hockey_app_token  is None:
+            self._hockey_app_token  = raw_input('Enter hockey app token: ')
+        return self._hockey_app_token 
+
+    @property
+    def crittercism_app_id(self):
+        if self._crittercism_app_id is None:
+            self._crittercism_app_id = raw_input('Enter crittercism app id: ')
+        return self._crittercism_app_id 
+
+    @property
+    def crittercism_key(self):
+        if self._crittercism_key  is None:
+            self._crittercism_key = raw_input('Enter crittercism key: ')
+        return self._crittercism_key 
+
+    @property
+    def dist_cert_path(self):
+        if self._dist_cert_path is None:
+            self._dist_cert_path = os.path.abspath(raw_input('Enter dist.cer path: '))
+            print(self._dist_cert_path)
+
+        return self._dist_cert_path 
+
+    @property
+    def dist_p12_path(self):
+        if self._dist_p12_path is None:
+            self._dist_p12_path = os.path.abspath(raw_input('Enter dist.p12 path: '))
+            print(self._dist_p12_path)
+        return self._dist_p12_path 
+
+    @property
+    def mobileprovision_path(self):
+        if self._mobileprovision_path is None:
+            self._mobileprovision_path = os.path.abspath(raw_input('Enter mobileprovision path: '))
+            print(self._mobileprovision_path)
+        return self._mobileprovision_path 
+
+    @property
+    def key_password(self):
+        if self._key_password is None:
+            self._key_password = raw_input('Enter key password: ')
+        return self._key_password 
+
+    def export_config(self):
+        if self._config_imported:
+            return
+
+        path = prepend_src_path('travis_ios_script_config.ini')
+        f = open(path, 'w')
+        c = ConfigParser.ConfigParser()
+
+        c.add_section('General')
+        c.set('General', 'project_path', self.project_path)
+        c.set('General', 'app_name', self.app_name)
+        c.set('General', 'developer_name', self.developer_name)
+        c.set('General', 'profile_name', self.profile_name)
+        c.set('General', 'workspace_name', self.workspace_name)
+        c.set('General', 'scheme_name', self.scheme_name)
+        c.set('General', 'app_extension_profile_name', self.app_extension_profile_name)
+
+        c.add_section('Certificates and Profile')
+        c.set('Certificates and Profile', 'encryption_secret', self.encryption_secret)
+        c.set('Certificates and Profile', 'dist_cert_path', self.dist_cert_path)
+        c.set('Certificates and Profile', 'dist_p12_path', self.dist_p12_path)
+        c.set('Certificates and Profile', 'mobileprovision_path', self.mobileprovision_path)
+        c.set('Certificates and Profile', 'key_password', self.key_password)
+
+        c.add_section('TestFlight')
+        c.set('TestFlight', 'deliver_user', self.deliver_user)
+        c.set('TestFlight', 'deliver_app_id', self.deliver_app_id)
+        c.set('TestFlight', 'apple_testflight_upload_branch', self.apple_testflight_upload_branch)
+
+        c.add_section('HockeyApp')
+        c.set('HockeyApp', 'hockey_app_id', self.hockey_app_id)
+        c.set('HockeyApp', 'hockey_app_token', self.hockey_app_token)
+        c.set('HockeyApp', 'hockeyapp_upload_branch', self.hockeyapp_upload_branch)
+
+        c.add_section('Crittercism')
+        c.set('Crittercism', 'crittercism_app_id', self.crittercism_app_id)
+        c.set('Crittercism', 'crittercism_key', self.crittercism_key)
+
+        c.write(f)
+        f.close()
+
+        print("Config file saved at %s" % path)
+
+    def import_config(self):
+        c = ConfigParser.ConfigParser()
+        path = os.path.abspath(raw_input('Enter config path: '))
+        print(path)
+        c.read(path)
+
+        self._project_path = c.get('General', 'project_path')
+        self._app_name = c.get('General', 'app_name')
+        self._developer_name = c.get('General', 'developer_name')
+        self._profile_name = c.get('General', 'profile_name')
+        self._workspace_name = c.get('General', 'workspace_name')
+        self._scheme_name = c.get('General', 'scheme_name')
+        self._app_extension_profile_name = c.get('General', 'app_extension_profile_name')
+
+
+        self._encryption_secret = c.get('Certificates and Profile', 'encryption_secret')
+        self._dist_cert_path = c.get('Certificates and Profile', 'dist_cert_path')
+        self._dist_p12_path = c.get('Certificates and Profile', 'dist_p12_path')
+        self._mobileprovision_path = c.get('Certificates and Profile', 'mobileprovision_path')
+        self._key_password = c.get('Certificates and Profile', 'key_password')
+
+        self._deliver_user = c.get('TestFlight', 'deliver_user')
+        self._deliver_app_id = c.get('TestFlight', 'deliver_app_id')
+        self._apple_testflight_upload_branch = c.get('TestFlight', 'apple_testflight_upload_branch')
+
+        self._hockey_app_id = c.get('HockeyApp', 'hockey_app_id')
+        self._hockey_app_token = c.get('HockeyApp', 'hockey_app_token')
+        self._hockeyapp_upload_branch = c.get('HockeyApp', 'hockeyapp_upload_branch')
+
+        self._crittercism_app_id = c.get('Crittercism', 'crittercism_app_id')
+        self._crittercism_key = c.get('Crittercism', 'crittercism_key')
+
+        self._config_imported = True
+
+config = Config()
+
+src_path = os.path.dirname(os.path.realpath(__file__))
+
+def prepend_src_path(filename):
+    return os.path.join(src_path, filename)
+
+def setup_filepath_autocomplete():
+    def complete(text, state):
+        return (glob.glob(text+'*')+[None])[state]
+
+    readline.set_completer_delims(' \t\n;')
+    readline.parse_and_bind("tab: complete")
+    readline.set_completer(complete)
+
+def prepend_project_path(filename):
+    return os.path.join(config.project_path, filename)
+
+def create_symlinks():
+    if os.path.exists(prepend_project_path('scripts')):
+        os.remove(prepend_project_path('scripts'))
+
+    os.symlink(os.path.relpath(prepend_src_path('scripts'), 
+        config.project_path), prepend_project_path('scripts'))
+
+    if not os.path.exists(prepend_project_path('certs')):
+        os.makedirs(prepend_project_path('certs'))
+
+    if os.path.exists(prepend_project_path('certs/apple.cer')):
+        os.remove(prepend_project_path('certs/apple.cer'))
+
+    os.symlink(os.path.relpath(prepend_src_path('certs/apple.cer'), 
+        prepend_project_path('certs')), prepend_project_path('certs/apple.cer'))
+
+def encrypt_profile_and_certs():
+    if not os.path.exists(prepend_project_path('profile')):
+        os.makedirs(prepend_project_path('profile'))
+
+    call("openssl aes-256-cbc -k '%s' -in %s -out %s -a" % (
+        config.encryption_secret, 
+        config.dist_cert_path, 
+        prepend_project_path('certs/dist.cer.enc')), shell=True)
+
+    call("openssl aes-256-cbc -k '%s' -in %s -out %s -a" % (
+        config.encryption_secret, 
+        config.dist_p12_path, 
+        prepend_project_path('certs/dist.p12.enc')), shell=True)
+
+    call("openssl aes-256-cbc -k '%s' -in %s -out %s -a" % (
+        config.encryption_secret, 
+        config.mobileprovision_path, 
+        prepend_project_path("profile/%s.mobileprovision.enc" % config.profile_name)), shell=True)
+
+def generate_travis_yml():
+    template = Template(filename=prepend_src_path('_travis.yml.mako'))
+
+    encrypted_encryption_secret = check_output(
+            "travis encrypt 'ENCRYPTION_SECRET=%s'" % (config.encryption_secret),
+            shell=True).strip("\"\n")
+
+    hockey_app_id = check_output(
+            "travis encrypt 'HOCKEY_APP_ID=%s'" % (config.hockey_app_id), 
+            shell=True).strip("\"\n")
+
+    hockey_app_token = check_output(
+            "travis encrypt 'HOCKEY_APP_TOKEN=%s'" % (config.hockey_app_token), 
+            shell=True).strip("\"\n")
+
+    crittercism_app_id = check_output(
+            "travis encrypt 'CRITTERCISM_APP_ID=%s'" % (config.crittercism_app_id), 
+            shell=True).strip("\"\n")
+
+    crittercism_key = check_output(
+            "travis encrypt 'CRITTERCISM_KEY=%s'" % (config.crittercism_key), 
+            shell=True).strip("\"\n")
+
+    key_password = check_output(
+            "travis encrypt 'KEY_PASSWORD=%s'" % (config.key_password), 
+            shell=True).strip("\"\n")
+
+    f = open(prepend_project_path('.travis.yml'), 'w')
+    f.write(template.render(
+        app_name=config.app_name,
+        developer_name=config.developer_name,
+        profile_name=config.profile_name,
+        workspace_name=config.workspace_name,
+        scheme_name=config.scheme_name,
+        deliver_user=config.deliver_user,
+        deliver_app_id=config.deliver_app_id,
+        app_extension_profile_name=config.app_extension_profile_name,
+        apple_testflight_upload_branch=config.apple_testflight_upload_branch,
+        hockeyapp_upload_branch=config.hockeyapp_upload_branch,
+        encryption_secret=encrypted_encryption_secret,
+        hockey_app_id=hockey_app_id,
+        hockey_app_token=hockey_app_token,
+        crittercism_app_id=crittercism_app_id,
+        crittercism_key=crittercism_key,
+        key_password=key_password
+    ))
+
+def perform_build_test():
+    os.environ["APP_NAME"] = config.app_name
+    os.environ["DEVELOPER_NAME"] = config.developer_name
+    os.environ["PROFILE_NAME"] = config.profile_name
+    os.environ["WORKSPACE_NAME"] = config.workspace_name 
+    os.environ["SCHEME_NAME"] = config.scheme_name
+    os.environ["BUILD_SDK"] = "iphonesimulator8.1"
+    os.environ["RELEASE_BUILD_SDK"] = "iphoneos8.1"
+    os.environ["DELIVER_USER"] = config.deliver_user
+    os.environ["DELIVER_APP_ID"] = config.deliver_app_id
+    os.environ["APP_EXTENSION_PROFILE_NAME"] = config.app_extension_profile_name
+    os.environ["APPLE_TESTFLIGHT_UPLOAD_BRANCH"] = config.apple_testflight_upload_branch
+    os.environ["HOCKEYAPP_UPLOAD_BRANCH"] = config.hockeyapp_upload_branch
+    os.environ["ENCRYPTION_SECRET"] = config.encryption_secret
+    os.environ["HOCKEY_APP_ID"] = config.hockey_app_id
+    os.environ["HOCKEY_APP_TOKEN"] = config.hockey_app_token
+    os.environ["CRITTERCISM_APP_ID"] = config.crittercism_app_id
+    os.environ["CRITTERCISM_KEY"] = config.crittercism_key
+    os.environ["KEY_PASSWORD"] = config.key_password
+    os.environ["TRAVIS_PULL_REQUEST"] = "false"
+
+    call("export LANG=en_US.UTF-8", shell=True)
+    call("brew update", shell=True)
+    call("gem install --no-rdoc --no-ri cocoapods", shell=True)
+ 
+    call("./scripts/decrypt-key.sh", shell=True)
+    call("./scripts/add-key.sh", shell=True)
+
+    call("xctool -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME -sdk $BUILD_SDK ONLY_ACTIVE_ARCH=NO", shell=True)
+    call("xctool test -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME -sdk $BUILD_SDK ONLY_ACTIVE_ARCH=NO", shell=True)
+    call("xctool -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME -sdk $RELEASE_BUILD_SDK -configuration Release ONLY_ACTIVE_ARCH=NO archive -archivePath $PWD/build/$APP_NAME.xcarchive", shell=True)
+
+    call("./scripts/sign-and-upload.sh", shell=True)
+    call("./scripts/remove-key.sh", shell=True)
+
+def run():
+    setup_filepath_autocomplete()
+
+    if raw_input('Import an existing config file [Y/n]? ') == "Y":
+        config.import_config()
+
+    os.chdir(config.project_path)
+    create_symlinks()
+    encrypt_profile_and_certs()
+    generate_travis_yml()
+    config.export_config()
+    
+    if raw_input('Perform a build test [Y/n]? ') == "Y":
+        perform_build_test()
+
+run()
