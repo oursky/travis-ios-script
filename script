@@ -258,14 +258,18 @@ def prepend_project_path(filename):
     return os.path.join(config.project_path, filename)
 
 def create_symlinks():
-    os.remove(prepend_project_path('scripts'))
+    if os.path.exists(prepend_project_path('scripts')):
+        os.remove(prepend_project_path('scripts'))
+
     os.symlink(os.path.relpath(prepend_src_path('scripts'), 
         config.project_path), prepend_project_path('scripts'))
 
     if not os.path.exists(prepend_project_path('certs')):
         os.makedirs(prepend_project_path('certs'))
 
-    os.remove(prepend_project_path('certs/apple.cer'))
+    if os.path.exists(prepend_project_path('certs/apple.cer')):
+        os.remove(prepend_project_path('certs/apple.cer'))
+
     os.symlink(os.path.relpath(prepend_src_path('certs/apple.cer'), 
         prepend_project_path('certs')), prepend_project_path('certs/apple.cer'))
 
