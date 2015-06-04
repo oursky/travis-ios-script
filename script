@@ -2,9 +2,9 @@
 
 import glob
 import os
+import re
 import ConfigParser
 from subprocess import check_output, call
-
 
 import readline
 from mako.template import Template
@@ -36,7 +36,7 @@ class Config:
     @property
     def app_name(self):
         if self._app_name is None:
-            self._app_name = raw_input('Enter app name: ')
+            self._app_name = raw_input('Enter app name (arbitrary): ')
         return self._app_name
 
     @property
@@ -50,19 +50,37 @@ class Config:
     def profile_name(self):
         if self._profile_name is None:
             self._profile_name = raw_input(
-                    'Enter provision profile name of the release build: ')
+                    'Enter provision profile name of the release build (arbitrary): ')
         return self._profile_name
 
     @property
     def workspace_name(self):
         if self._workspace_name is None:
-            self._workspace_name = raw_input('Enter workspace name: ')
+            default = ""
+            for f in os.listdir(self.project_path):
+                if re.search("(.+)\.xcworkspace", f):
+                    default = re.search("(.+)\.xcworkspace", f).group(1)
+                    break
+
+            self._workspace_name = raw_input_with_default('Enter workspace name: ', default)
         return self._workspace_name
 
     @property
     def scheme_name(self):
         if self._scheme_name is None:
-            self._scheme_name = raw_input('Enter scheme name: ')
+            default = ""
+            for dir_name in os.listdir(self.project_path):
+                if re.search("(.+)\.xcodeproj", dir_name):
+                    path = os.path.join(self.project_path, dir_name, 
+                            'xcshareddata', 'xcschemes')
+                    if os.path.exists(path):
+                        for f in os.listdir(path):
+                            if re.search("(.+)\.xcscheme", f):
+                                default = re.search("(.+)\.xcscheme", f).group(1)
+                            break
+                    break
+
+            self._scheme_name = raw_input_with_default('Enter scheme name: ', default)
         return self._scheme_name
 
     @property
@@ -82,7 +100,7 @@ class Config:
     def app_extension_profile_name(self):
         if self._app_extension_profile_name is None:
             self._app_extension_profile_name = raw_input(
-                    'Enter provision profile name for app extension, (if any) ')
+                    'Enter provision profile name for app extension, (arbitrary, if any)')
         return self._app_extension_profile_name
 
     @property
@@ -242,6 +260,13 @@ class Config:
 config = Config()
 
 src_path = os.path.dirname(os.path.realpath(__file__))
+
+def raw_input_with_default(prompt, default):
+    readline.set_startup_hook(lambda: readline.insert_text(default))
+    try:
+        return raw_input(prompt)
+    finally:
+        readline.set_startup_hook()
 
 def prepend_src_path(filename):
     return os.path.join(src_path, filename)
