@@ -386,7 +386,7 @@ def run():
     generate_travis_yml()
     config.export_config()
     
-    if raw_input('Perform a build test [Y/n]? ') == "Y":
-        perform_build_test()
+    #if raw_input('Perform a build test [Y/n]? ') == "Y":
+        #perform_build_test()
 
 run()
