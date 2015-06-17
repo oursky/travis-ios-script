@@ -1,4 +1,8 @@
 #!/bin/sh
+if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+    echo "It is a pull request, skip to decrypt keys..."
+    exit 0
+fi
 
 if [[ -z "$ENCRYPTION_SECRET" ]]; then
     echo "Error: Missing encryption secret."

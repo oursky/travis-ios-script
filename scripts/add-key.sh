@@ -1,4 +1,9 @@
 #!/bin/sh
+if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+    echo "It is a pull request, skip to add keys..."
+    exit 0
+fi
+
 if [[ -z "$KEY_PASSWORD" ]]; then
     echo "Error: Missing password for adding private key"
     exit 1

@@ -1,4 +1,9 @@
 #!/bin/sh
+if [[ "$TRAVIS_PULL_REQUEST" != "false" ]]; then
+    echo "It is a pull request, no need to remove..."
+    exit 0
+fi
+
 security delete-keychain ios-build.keychain
 rm -f "~/Library/MobileDevice/Provisioning Profiles/$PROFILE_NAME.mobileprovision"
 if [[ -n "$APP_EXTENSION_PROFILE_NAME" ]]; then
