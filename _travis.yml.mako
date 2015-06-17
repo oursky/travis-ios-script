@@ -9,16 +9,7 @@ before_script:
 - ./scripts/decrypt-key.sh
 - ./scripts/add-key.sh
 script:
-- xctool -workspace $WORKSPACE_NAME.xcworkspace
-  -scheme $SCHEME_NAME -sdk $BUILD_SDK
-  ONLY_ACTIVE_ARCH=NO
-- xctool test -workspace $WORKSPACE_NAME.xcworkspace
-  -scheme $SCHEME_NAME -sdk $BUILD_SDK
-  ONLY_ACTIVE_ARCH=NO
-- xctool -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME
-  -sdk $RELEASE_BUILD_SDK -configuration Release ONLY_ACTIVE_ARCH=NO
-  archive -archivePath $PWD/build/$APP_NAME.xcarchive
-
+- ./scripts/build-test-archive.sh
 after_success:
 - ./scripts/sign-and-upload.sh
 after_script:
