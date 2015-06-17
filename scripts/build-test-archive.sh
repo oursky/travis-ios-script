@@ -26,7 +26,7 @@ else
         exit 1
     fi
 
-    echo "Archive test..."
+    echo "Making archive..."
     xctool -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME \
     -sdk $RELEASE_BUILD_SDK -configuration Release ONLY_ACTIVE_ARCH=NO \
     archive -archivePath $PWD/build/$APP_NAME.xcarchive
