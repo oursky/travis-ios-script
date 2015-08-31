@@ -23,8 +23,6 @@ env:
   - PROFILE_NAME="${profile_name}"
   - WORKSPACE_NAME="${workspace_name}"
   - SCHEME_NAME="${scheme_name}"
-  - BUILD_SDK="iphonesimulator8.1"
-  - RELEASE_BUILD_SDK="iphoneos8.1"
   - DELIVER_USER="${deliver_user}"
   - DELIVER_APP_ID="${deliver_app_id}"
   - APP_EXTENSION_PROFILE_NAME="${app_extension_profile_name}"

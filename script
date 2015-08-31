@@ -345,8 +345,6 @@ def perform_build_test():
     os.environ["PROFILE_NAME"] = config.profile_name
     os.environ["WORKSPACE_NAME"] = config.workspace_name 
     os.environ["SCHEME_NAME"] = config.scheme_name
-    os.environ["BUILD_SDK"] = "iphonesimulator8.1"
-    os.environ["RELEASE_BUILD_SDK"] = "iphoneos8.1"
     os.environ["DELIVER_USER"] = config.deliver_user
     os.environ["DELIVER_APP_ID"] = config.deliver_app_id
     os.environ["APP_EXTENSION_PROFILE_NAME"] = config.app_extension_profile_name
@@ -367,9 +365,9 @@ def perform_build_test():
     call("./scripts/decrypt-key.sh", shell=True)
     call("./scripts/add-key.sh", shell=True)
 
-    call("xctool -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME -sdk $BUILD_SDK ONLY_ACTIVE_ARCH=NO", shell=True)
-    call("xctool test -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME -sdk $BUILD_SDK ONLY_ACTIVE_ARCH=NO", shell=True)
-    call("xctool -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME -sdk $RELEASE_BUILD_SDK -configuration Release ONLY_ACTIVE_ARCH=NO archive -archivePath $PWD/build/$APP_NAME.xcarchive", shell=True)
+    call("xctool -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME ONLY_ACTIVE_ARCH=NO", shell=True)
+    call("xctool test -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME ONLY_ACTIVE_ARCH=NO", shell=True)
+    call("xctool -workspace $WORKSPACE_NAME.xcworkspace -scheme $SCHEME_NAME -configuration Release ONLY_ACTIVE_ARCH=NO archive -archivePath $PWD/build/$APP_NAME.xcarchive", shell=True)
 
     call("./scripts/sign-and-upload.sh", shell=True)
     call("./scripts/remove-key.sh", shell=True)
