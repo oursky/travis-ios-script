@@ -42,6 +42,22 @@ if [[  -n "$APP_EXTENSION_PROFILE_NAME" ]]; then
     -out "profile/$APP_EXTENSION_PROFILE_NAME.mobileprovision"
 fi
 
+if [[  -n "$WATCH_APP_PROFILE_NAME" ]]; then
+    echo "INFO: Provision profile for watch app found"
+    openssl aes-256-cbc \
+    -k "$ENCRYPTION_SECRET" \
+    -in "profile/$WATCH_APP_PROFILE_NAME.mobileprovision.enc" -d -a \
+    -out "profile/$WATCH_APP_PROFILE_NAME.mobileprovision"
+fi
+
+if [[  -n "$WATCH_APP_EXTENSION_PROFILE_NAME" ]]; then
+    echo "INFO: Provision profile for watch app extension found"
+    openssl aes-256-cbc \
+    -k "$ENCRYPTION_SECRET" \
+    -in "profile/$WATCH_APP_EXTENSION_PROFILE_NAME.mobileprovision.enc" -d -a \
+    -out "profile/$WATCH_APP_EXTENSION_PROFILE_NAME.mobileprovision"
+fi
+
 openssl aes-256-cbc \
 -k "$ENCRYPTION_SECRET" \
 -in "certs/dist.cer.enc" -d -a \

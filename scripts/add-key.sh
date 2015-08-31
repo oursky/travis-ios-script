@@ -36,3 +36,13 @@ if [[ -n "$APP_EXTENSION_PROFILE_NAME" ]]; then
 	echo "found APP_EXTENSION_PROFILE_NAME"
 	cp "./profile/$APP_EXTENSION_PROFILE_NAME.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/
 fi
+
+if [[ -n "$WATCH_APP_PROFILE_NAME" ]]; then
+	echo "found WATCH_APP_PROFILE_NAME"
+	cp "./profile/$WATCH_APP_PROFILE_NAME.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/
+fi
+
+if [[ -n "$WATCH_APP_EXTENSION_PROFILE_NAME" ]]; then
+	echo "found WATCH_APP_EXTENSION_PROFILE_NAME"
+	cp "./profile/$WATCH_APP_EXTENSION_PROFILE_NAME.mobileprovision" ~/Library/MobileDevice/Provisioning\ Profiles/
+fi

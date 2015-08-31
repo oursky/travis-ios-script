@@ -10,6 +10,14 @@ if [[ -n "$APP_EXTENSION_PROFILE_NAME" ]]; then
 	rm -f "~/Library/MobileDevice/Provisioning Profiles/$APP_EXTENSION_PROFILE_NAME.mobileprovision"
   rm "profile/$APP_EXTENSION_PROFILE_NAME.mobileprovision"
 fi
+if [[ -n "$WATCH_APP_PROFILE_NAME" ]]; then
+	rm -f "~/Library/MobileDevice/Provisioning Profiles/$WATCH_APP_PROFILE_NAME.mobileprovision"
+  rm "profile/$WATCH_APP_PROFILE_NAME.mobileprovision"
+fi
+if [[ -n "$WATCH_APP_EXTENSION_PROFILE_NAME" ]]; then
+	rm -f "~/Library/MobileDevice/Provisioning Profiles/$WATCH_APP_EXTENSION_PROFILE_NAME.mobileprovision"
+  rm "profile/$WATCH_APP_EXTENSION_PROFILE_NAME.mobileprovision"
+fi
 
 rm "profile/$PROFILE_NAME.mobileprovision"
 rm "certs/dist.cer"

@@ -28,6 +28,8 @@ env:
   - DELIVER_USER="${deliver_user}"
   - DELIVER_APP_ID="${deliver_app_id}"
   - APP_EXTENSION_PROFILE_NAME="${app_extension_profile_name}"
+  - WATCH_APP_PROFILE_NAME="${watch_app_profile_name}"
+  - WATCH_APP_EXTENSION_PROFILE_NAME="${watch_app_extension_profile_name}"
   - APPLE_TESTFLIGHT_UPLOAD_BRANCH="${apple_testflight_upload_branch}"
   - HOCKEYAPP_UPLOAD_BRANCH="${hockeyapp_upload_branch}"
   - secure: ${encryption_secret} # ENCRYPTION_SECRET
