@@ -69,7 +69,7 @@ if [[ "$TRAVIS_BRANCH" == "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
   fi
 
   echo "Installing gem..."
-  gem install deliver
+  gem install deliver -v 0.13.5
 
   echo "At $APPLE_TESTFLIGHT_UPLOAD_BRANCH branch, upload to testflight."
   deliver testflight "$OUTPUT_DIR/$APP_NAME.ipa" -a "$DELIVER_APP_ID"
