@@ -69,10 +69,11 @@ if [[ "$TRAVIS_BRANCH" == "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
   fi
 
   echo "Installing gem..."
-  gem install deliver -v 0.13.5
+  gem install pilot
 
   echo "At $APPLE_TESTFLIGHT_UPLOAD_BRANCH branch, upload to testflight."
-  deliver testflight "$OUTPUT_DIR/$APP_NAME.ipa" -a "$DELIVER_APP_ID"
+  sudo rvm osx-ssl-certs update all
+  pilot upload --skip_submission --ipa "$OUTPUT_DIR/$APP_NAME.ipa" --apple_id "$DELIVER_APP_ID" --username $DELIVER_USER
 
   if [[ $? -ne 0 ]]; then
     echo "Error: Fail uploading to TestFlight"
