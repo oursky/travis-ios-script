@@ -16,11 +16,13 @@ ARCHIVE_DIR="$OUTPUT_DIR/$APP_NAME.xcarchive"
 APP_FILE_PATH="$ARCHIVE_DIR/Products/Applications/$APP_NAME.app"
 
 if [[ -n "$APP_EXTENSION_PROFILE_NAME" && -n "$WATCH_APP_PROFILE_NAME" ]]; then
-  xcrun -log -sdk iphoneos \
-  PackageApplication "$APP_FILE_PATH" \
-  -o "$OUTPUT_DIR/$APP_NAME.ipa" \
-  -sign "$DEVELOPER_NAME" \
-  -embed "$PROVISIONING_PROFILE" "$APP_EXTENSION_PROFILE" "$WATCH_APP_PROFILE" "$WATCH_APP_EXTENSION_PROFILE"
+  xcodebuild -exportArchive -archivePath "$ARCHIVE_DIR" -exportPath "$OUTPUT_DIR/$APP_NAME.ipa"
+
+  # xcrun -log -sdk iphoneos \
+  # PackageApplication "$APP_FILE_PATH" \
+  # -o "$OUTPUT_DIR/$APP_NAME.ipa" \
+  # -sign "$DEVELOPER_NAME" \
+  # -embed "$PROVISIONING_PROFILE" "$APP_EXTENSION_PROFILE" "$WATCH_APP_PROFILE" "$WATCH_APP_EXTENSION_PROFILE"
 elif [[ -n "$APP_EXTENSION_PROFILE_NAME" ]]; then
   xcrun -log -sdk iphoneos \
   PackageApplication "$APP_FILE_PATH" \
