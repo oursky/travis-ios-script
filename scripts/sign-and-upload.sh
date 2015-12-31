@@ -55,6 +55,17 @@ RELEASE_NOTES="Build: $TRAVIS_BUILD_NUMBER\nUploaded: $RELEASE_DATE"
 # Upload to Apple TestFlight #
 ##############################
 if [[ "$TRAVIS_BRANCH" == "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
+
+  # Send to slack first
+  # Because pilot upload is not that reliable
+  echo 'uploading ipa file to slack'
+  curl -i https://slack.com/api/files.upload \
+    -X POST \
+    -F file=@$OUTPUT_DIR/$APP_NAME.ipa \
+    -F channels=C04SDRRGT \
+    -F token=$SLACK_API_TOKEN \
+    -F filename="$APP_NAME.ipa"
+
   if [[ -z "$DELIVER_USER" ]]; then
     echo "Error: Missing TestFlight DELIVER_USER."
     exit 1
@@ -73,9 +84,11 @@ if [[ "$TRAVIS_BRANCH" == "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
   echo "Installing gem..."
   gem install pilot
 
+  echo "Install timeout"
+  brew install coreutils
+
   echo "At $APPLE_TESTFLIGHT_UPLOAD_BRANCH branch, upload to testflight."
-  sudo rvm osx-ssl-certs update all
-  pilot upload --skip_submission --ipa "$OUTPUT_DIR/$APP_NAME.ipa" --apple_id "$DELIVER_APP_ID" --username $DELIVER_USER
+  gtimeout 600 pilot upload --skip_submission --ipa "$OUTPUT_DIR/$APP_NAME.ipa" --apple_id "$DELIVER_APP_ID" --username $DELIVER_USER
 
   if [[ $? -ne 0 ]]; then
     echo "Error: Fail uploading to TestFlight"
