@@ -19,7 +19,11 @@ if [[ -n "$APP_EXTENSION_PROFILE_NAME" && -n "$WATCH_APP_PROFILE_NAME" ]]; then
   xcodebuild -exportArchive \
   -archivePath "$ARCHIVE_DIR" \
   -exportPath "$OUTPUT_DIR/$APP_NAME.ipa" \
-  -exportProvisioningProfile "$PROFILE_FULL_NAME"
+  -exportWithOriginalSigningIdentity
+
+  # xcodebuild -project Extension\ Demo.xcodeproj -scheme Extension\ Demo -sdk iphoneos -archivePath ./Build/extension-demo.xcarchive -configuration AdHoc archive
+  # xcodebuild -exportArchive -archivePath ./Build/extension-demo.xcarchive -exportPath ./Build/extension-demo.ipa -exportWithOriginalSigningIdentity
+
 
   # xcrun -log -sdk iphoneos \
   # PackageApplication "$APP_FILE_PATH" \
