@@ -30,6 +30,7 @@ env:
   - WATCH_APP_EXTENSION_PROFILE_NAME="${watch_app_extension_profile_name}"
   - APPLE_TESTFLIGHT_UPLOAD_BRANCH="${apple_testflight_upload_branch}"
   - HOCKEYAPP_UPLOAD_BRANCH="${hockeyapp_upload_branch}"
+  - SLACK_CHANNEL="${slack_channel}"
   - secure: ${encryption_secret} # ENCRYPTION_SECRET
   - secure: ${hockey_app_id} # HOCKEY_APP_ID
   - secure: ${hockey_app_token} # HOCKEY_APP_TOKEN

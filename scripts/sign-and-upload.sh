@@ -63,15 +63,17 @@ RELEASE_NOTES="Build: $TRAVIS_BUILD_NUMBER\nUploaded: $RELEASE_DATE"
 ##############################
 if [[ "$TRAVIS_BRANCH" == "$APPLE_TESTFLIGHT_UPLOAD_BRANCH" ]]; then
 
-  # Send to slack first
-  # Because pilot upload is not that reliable
-  echo 'uploading ipa file to slack'
-  curl -i https://slack.com/api/files.upload \
-    -X POST \
-    -F file=@$OUTPUT_DIR/$APP_NAME.ipa \
-    -F channels=C04SDRRGT \
-    -F token=$SLACK_API_TOKEN \
-    -F filename="$APP_NAME.ipa"
+  if [[ -n "$SLACK_CHANNEL" && -n "$SLACK_API_TOKEN" ]]; then
+    # Send to slack first
+    # Because pilot upload is not that reliable
+    echo 'uploading ipa file to slack'
+    curl -i https://slack.com/api/files.upload \
+      -X POST \
+      -F file=@$OUTPUT_DIR/$APP_NAME.ipa \
+      -F channels=$SLACK_CHANNEL \
+      -F token=$SLACK_API_TOKEN \
+      -F filename="$APP_NAME.ipa"
+  fi
 
   if [[ -z "$DELIVER_USER" ]]; then
     echo "Error: Missing TestFlight DELIVER_USER."
