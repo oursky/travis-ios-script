@@ -11,10 +11,6 @@ fi
 
 security create-keychain -p travis ios-build.keychain
 
-security import ./certs/apple.cer \
--k ~/Library/Keychains/ios-build.keychain \
--T /usr/bin/codesign
-
 security import ./certs/dist.cer \
 -k ~/Library/Keychains/ios-build.keychain \
 -T /usr/bin/codesign
