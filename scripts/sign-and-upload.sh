@@ -16,7 +16,8 @@ APP_FILE_PATH="$ARCHIVE_DIR/Products/Applications/$APP_NAME.app"
 xcodebuild -exportArchive \
 -archivePath "$ARCHIVE_DIR" \
 -exportPath "OUTPUT_DIR/$APP_NAME.ipa" \
--exportWithOriginalSigningIdentity
+-exportWithOriginalSigningIdentity \
+-exportFormat ipa
 
 #########################
 # Achieve the dSYM file #
