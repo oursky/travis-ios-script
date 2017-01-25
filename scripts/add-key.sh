@@ -11,6 +11,10 @@ fi
 
 security create-keychain -p travis ios-build.keychain
 
+security default-keychain -s ios-build.keychain
+
+security unlock-keychain -p travis ios-build.keychain
+
 security import ./certs/apple.cer \
 -k ~/Library/Keychains/ios-build.keychain \
 -T /usr/bin/codesign
@@ -27,7 +31,8 @@ security import ./certs/dist.p12 \
 security set-keychain-settings -t 3600 \
 -l ~/Library/Keychains/ios-build.keychain
 
-security default-keychain -s ios-build.keychain
+# See https://docs.travis-ci.com/user/common-build-problems/#Mac%3A-macOS-Sierra-(10.12)-Code-Signing-Errors
+security set-key-partition-list -S apple-tool:,apple: -s -k travis ios-build.keychain
 
 mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
 
